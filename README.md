@@ -27,6 +27,7 @@ assignment-3/
 │   ├── connectivity/   TopologicalSort, TopoResult, SCC
 │   ├── shortestpath/   Dijkstra, DijkstraResult
 │   ├── Main.java       runs the experiments, writes csv tables
+│   ├── Demo.java       prints MST, topological order, SCC and Dijkstra paths on tiny graphs
 │   └── Tests.java      correctness tests (no external libraries)
 ├── results/
 │   ├── tables/         csv tables written by Main
@@ -41,6 +42,7 @@ assignment-3/
 javac -d out $(find src -name "*.java")
 java -cp out Tests          # 36 correctness checks
 java -cp out Main           # experiments -> results/tables/*.csv
+java -cp out Demo           # readable output of all algorithms on small graphs
 python3 results/make_plots.py   # plots -> results/plots/*.png (needs matplotlib)
 ```
 
@@ -179,7 +181,41 @@ Both algorithms return the same total weight on all three graphs (129, 1170, 131
 | Medium | 100 | 500 | 15.26 | 100 | 1000 | 199 | 400 |
 | Large | 1000 | 5000 | 470.75 | 1000 | 10000 | 1986 | 3974 |
 
-### 5.6 Plots
+### 5.6 Demo output (reported results)
+
+`java -cp out Demo` prints the MST edges and weight, the topological order (or a cycle message), all strongly connected
+components, and the shortest distances with paths (including an unreachable district). The output is also saved in
+`results/demo_output.txt`.
+
+```
+=== MST (6 districts, 8 roads) ===
+Kruskal: weight = 21, connected = true, components = 1, edges = (2-4:2) (1-2:3) (1-3:4) (3-5:5) (0-1:7) 
+Prim   : weight = 21, connected = true, components = 1, edges = (0-1:7) (1-2:3) (2-4:2) (1-3:4) (3-5:5) 
+Disconnected graph (vertex 4 has no roads):
+Kruskal: weight = 6, connected = false, components = 2, edges = (0-1:1) (1-2:2) (2-3:3) 
+Prim   : weight = 6, connected = false, components = 2, edges = (0-1:1) (1-2:2) (2-3:3) 
+
+=== Topological order ===
+DAG: has cycle = false, order = [4, 5, 2, 0, 3, 1]
+Graph with cycle 1->2->1: has cycle = true (no topological order exists)
+
+=== Strongly connected components ===
+Number of components: 4
+  component 1: [6]
+  component 2: [5, 4, 3]
+  component 3: [2, 1, 0]
+  component 4: [7]
+
+=== Dijkstra from district 0 ===
+  to 0: distance = 0, path = [0]
+  to 1: distance = 3, path = [0, 2, 1]
+  to 2: distance = 1, path = [0, 2]
+  to 3: distance = 4, path = [0, 2, 1, 3]
+  to 4: distance = 9, path = [0, 2, 1, 3, 4]
+  to 5: unreachable
+```
+
+### 5.7 Plots
 
 ![time vs vertices](results/plots/time_vs_vertices.png)
 
